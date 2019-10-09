@@ -1,9 +1,9 @@
-#ElasticSearch
-##前言
+# ElasticSearch
+## 前言
 ElasticSearch的javaAPI官方一共提供了有三种：TransPortClient,LowLevelRestClient,HighLevelRestClient。
 目前TransPortClient已经被废弃了，并且官方极力推荐HighLevelRestClient，本次的项目使用的就是HighLevenRestClient，目前论坛上相关资料还比较少，所以大部分参考的是ES官方文档。
-##在Windows系统安装配置ElasticSearch
-在官网下载ElasticSearch：https://www.elastic.co/cn/start
+## 在Windows系统安装配置ElasticSearch
+在官网下载ElasticSearch：[官网下载ElasticSearch](https://www.elastic.co/cn/start)
 
 下载完后解压（ES需要在本机安装JDK，这里默认已安装），进入到目录文件夹config，编辑elasticsearch.yml
 
@@ -19,14 +19,15 @@ ElasticSearch的javaAPI官方一共提供了有三种：TransPortClient,LowLevel
     http.cors.allow-origin: "*"
 
 然后使用cmd进入到解压包目录下，执行命令elasticsearch，即可开启es服务，在浏览器中访问localhost:9200能看到一串js数据就说明安装成功了
-##Head插件的使用
+## Head插件的使用
 安装Head插件需要nodejs和grunt
-###Node.js
-Node可以从官网下载http://nodejs.cn/，下载后进行安装即可，安装完成后打开cmd，使用node -v命令查询Node是否安装成功
-###grunt
+### Node.js
+Node可以从官网下载[官网下载Node.js](http://nodejs.cn/)，下载后进行安装即可，安装完成后打开cmd，使用node -v命令查询Node是否安装成功
+### grunt
 然后进行grunt的安装，cd到Node.js根目录下，运行命令npm install -g grunt-cli
-###Head插件
-在https://github.com/mobz/elasticsearch-head下载head插件的压缩包，并解压到本地，修改Gruntfile.js文件中加上一句hostname:'*'
+### Head插件
+[下载head插件](https://github.com/mobz/elasticsearch-head)
+下载head插件的压缩包，并解压到本地，修改Gruntfile.js文件中加上一句hostname:'*'
 	
     connect: {
         server: {
@@ -39,24 +40,24 @@ Node可以从官网下载http://nodejs.cn/，下载后进行安装即可，安�
         }
     }
 在elasticsearch-head-master目录下执行npm install命令，然后执行grunt server命令即可打开elasticsearch-head服务，通过浏览器访问localhost:9100端口，即可进入head页面
-##项目结构
-###parse包
+## 项目结构
+### parse包
 parse包里面主要包含了对配置文件的解析
 CenterConfig类里会扫描当前项目目录resource路径下的所有文件，如果是.xml,.properties,.json为后缀的文件，则会解析出properties和json文件中的所有键值对，xml文件中的所有标签名和内容放到Map集合中
-###query包
+### query包
 里面包含三个类和一个枚举类
 枚举类ESEnums:里面有QueryType用来列举要创建的QueryBuilder类型
 BuildQuery:初始化并创建对应的QueryBuilder
 ConfigBoolQuery:用来配置boolQuery
 ESConfigQuery:用来选择要创建的QueryBuilder类型并且传入参数并调用BuildQuery类初始化并创建QueryBuilder
-###tools包
+### tools包
 tools包里只包含一个类：EnumNameChangeToMethodNameTool
 用来将枚举名转换为方法名
-###CreateESClient类
+### CreateESClient类
 用来创建并初始化HighLevelRestClient
-###ESSingleton类
+### ESSingleton类
 这是一个单例类，用来存放配置文件的配置信息和持久化存放HighLevelRestClient
-###ESTools类
+### ESTools类
 此类的构造函数执行对配置文件的解析和对Client的初始化
 并且封装了对ES的大部分操作
 
@@ -86,9 +87,9 @@ reIndex():把一个索引迁移到另一个索引，迁移的包括Settings,Mapp
 
 searchByPage():分页查询
 
-##使用
+## 使用
 
-###首先
+### 首先
 **首先在xml配置文件中配置主机、端口和scheme**
     
     <host>127.0.0.1</host>
@@ -98,24 +99,24 @@ searchByPage():分页查询
 
     ESTools esTools = new ESTools();
 
-###获取Client
+### 获取Client
 **获取client，调用getClient()方法可以获取当前配置的RestHighLevelClient**
 
     RestHighLevelClient client = esTools.getClient();
     
-###创建Index
+### 创建Index
 **创建新的index**
     
     esTools.createIndex("index1");
     
-###添加
+### 添加
 **添加文档，给一个指定的Id添加文档**
 
     HashMap<String,Object> map = new HashMap<String,Object>();
             map.put("date","2018-10-01");
             map.put("age","20");
             esTools.addDocument("user","12",map);
-###删除
+### 删除
 **删除文档，通过Id删除的文档**
     
     esTools.deleteById("index1","10");
@@ -128,7 +129,7 @@ searchByPage():分页查询
             esTools.setQueryBuilders(queryBuilder);
             //删除
             esTools.deleteByQuery("index1");
-###修改
+### 修改
 **修改文档，通过Id修改整个文档**
 
     HashMap<String,Object> map = new HashMap<String,Object>();
@@ -144,7 +145,7 @@ searchByPage():分页查询
         esTools.setQueryBuilders(queryBuilder);
         //修改
         esTools.updateByQuery("age","10","index1");
-###查询
+### 查询
 **查询，查询整个Index并返回JsonMap数据**
 
     List<Map<String, Object>> maps = esTools.searchAndGetMap("index1");
@@ -162,7 +163,7 @@ searchByPage():分页查询
 **查询，分页查询(每页大小，第x页，查询索引)**
 
     esTools.searchByPage(10,1,"index1");
-###聚合查询
+### 聚合查询
 **聚合查询，以name字段为聚合点，计算age字段，并返回所有的桶的计算值(stats)**
 
         Map<String, Stats> statsMap = esTools.groupByTermsAndGetStates("name", "age", "user");
@@ -187,14 +188,14 @@ searchByPage():分页查询
             Stats stats = statsMap.get(o);
             System.out.println(stats.getCount());
         }
-###数据迁移，Reindex
+### 数据迁移，Reindex
 **数据迁移Reindex，将index1里的mappings,settings,和数据拷贝迁移到index2里**
 
     esTools.reIndex("index1","index2");
 
 
     
-###配置QueryBuilder
+### 配置QueryBuilder
 **MatchAllQueryBuilder(查询所有)**
     
             ESConfigQuery esConfigQuery = new ESConfigQuery(ESEnums.QueryType.MATCH_ALL_QUERY);
@@ -243,7 +244,7 @@ searchByPage():分页查询
             //执行查询
             List<Map<String, Object>> user = esTools.searchAndGetMap("user");
 
-##缺陷及改进
+## 缺陷及改进
 目前ESTools里的方法每调一次都需要重新创建一个ESTools对象，不然会存在多线程安全问题，后期会采用加锁或其他更优方式进行改进
 
 聚合查询也只包含term,dateRange,dateHistogram,以及state计算聚合四种，在将来了解和学习了更多的聚合知识后会进行一个聚合的封装
